@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
@@ -10,11 +11,9 @@ export default function RegisterPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);    
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -23,34 +22,57 @@ export default function RegisterPage() {
 
     if (error) {
       alert(error.message);
-      setLoading(false);
       return;
     }
 
-    alert("Register berhasil! Silakan login.");
+    alert("Akun berhasil dibuat");
     router.push("/login");
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
+    <div className="rounded-3xl bg-white p-10 shadow-xl">
+
+      <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        Daftar Akun
+      </h1>
+
+      <form onSubmit={handleRegister} className="space-y-5">
+
         <input
           type="email"
           placeholder="Email"
+          required
           onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-orange-500 focus:outline-none"
         />
-        <br />
+
         <input
           type="password"
           placeholder="Password"
+          required
           onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-orange-500 focus:outline-none"
         />
-        <br />
-        <button disabled={loading}>
-          {loading ? "Loading..." : "Register"}
+
+        <button
+          type="submit"
+          className="w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 transition"
+        >
+          Daftar
         </button>
+
       </form>
+
+      <p className="text-center text-sm text-gray-500 mt-6">
+        Sudah punya akun?{" "}
+        <Link
+          href="/login"
+          className="text-orange-500 font-semibold"
+        >
+          Login
+        </Link>
+      </p>
+
     </div>
   );
 }

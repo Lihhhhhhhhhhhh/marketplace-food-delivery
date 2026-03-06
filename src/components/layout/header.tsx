@@ -4,11 +4,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import { useCart } from "@/context/cart-context";
 
 export function Header() {
   const pathname = usePathname();
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
+
+  const { cart } = useCart();
+
+  const totalItems = cart.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   useEffect(() => {
     const getUser = async () => {
@@ -39,7 +47,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        
+
         {/* Logo */}
         <Link href="/" className="text-xl font-bold text-orange-600">
           GMRH
@@ -54,9 +62,17 @@ export function Header() {
 
         {/* Right Section */}
         <div className="flex items-center gap-4">
+
+          {/* Cart */}
           <Link href="/cart" className="relative text-xl">
-            🛒
-          </Link>
+          🛒
+
+          {totalItems > 0 && (
+            <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+              {totalItems}
+            </span>
+          )}
+        </Link>
 
           {user ? (
             <button
