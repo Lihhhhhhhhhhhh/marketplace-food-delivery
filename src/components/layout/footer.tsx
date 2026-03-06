@@ -9,16 +9,19 @@ export function Footer() {
 
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🍽️</span>
-              <span className="text-xl font-bold text-black">
-                GMRH Food
-              </span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">🍽️</span>
+              <div>
+                <span className="text-2xl font-extrabold tracking-wide text-gray-900">
+                  GMRH Food
+                </span>
+              </div>
             </div>
 
             <p className="mt-4 text-sm text-gray-700 leading-relaxed">
               Menyediakan makanan dan minuman berkualitas dengan cita rasa 
-              terbaik dan harga yang terjangkau untuk semua pelanggan.
+              terbaik serta layanan pengantaran yang cepat dan terpercaya 
+              untuk pelanggan kami.
             </p>
           </div>
 
@@ -56,7 +59,6 @@ export function Footer() {
 
         </div>
 
-        {/* Bottom */}
         <div className="mt-12 border-t border-gray-300 pt-6 text-center text-sm text-gray-600">
           © {new Date().getFullYear()} GMRH Food. All rights reserved.
         </div>

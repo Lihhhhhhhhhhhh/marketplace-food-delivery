@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useCart } from "@/context/cart-context";
 
 export function MenuPreview() {
   const menus = [
@@ -63,9 +66,17 @@ export function MenuPreview() {
                     Rp {menu.price.toLocaleString("id-ID")}
                   </span>
 
-                  <button className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-white transition hover:bg-orange-600">
-                    🛒 Keranjang
-                  </button>
+                <button
+                onClick={() =>
+                  addToCart({
+                    id: menu.id,
+                    name: menu.name,
+                    price: Number(menu.price.replace(/[^\d]/g, "")),
+                  })
+                }
+                className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-white hover:bg-orange-600">
+                🛒 Keranjang
+                </button>
                 </div>
               </div>
             </div>
