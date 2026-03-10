@@ -4,17 +4,20 @@ import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 
 type Menu = {
-  id: number;
+  id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
+  image?: string;
 };
 
 export function MenuCard({ menu }: { menu: Menu }) {
+
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
+
     addToCart({
       id: menu.id,
       name: menu.name,
@@ -29,13 +32,28 @@ export function MenuCard({ menu }: { menu: Menu }) {
   };
 
   return (
+
     <div className="rounded-2xl bg-white shadow-md overflow-hidden hover:shadow-lg transition">
 
-      <div className="h-56 bg-gray-300 flex items-center justify-center">
-        Gambar
-      </div>
+      {/* Image */}
+      <div className="h-56 bg-gray-200 overflow-hidden">
+
+  {menu.image ? (
+    <img
+      src={menu.image}
+      alt={menu.name}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="flex items-center justify-center h-full text-gray-400">
+      No Image
+    </div>
+  )}
+
+</div>
 
       <div className="p-5">
+
         <h3 className="font-semibold text-lg text-black">
           {menu.name}
         </h3>
@@ -45,8 +63,9 @@ export function MenuCard({ menu }: { menu: Menu }) {
         </p>
 
         <div className="mt-4 flex items-center justify-between">
+
           <span className="font-semibold text-orange-600">
-           Rp {menu.price.toLocaleString("id-ID")}
+            Rp {menu.price.toLocaleString("id-ID")}
           </span>
 
           <button
@@ -59,8 +78,11 @@ export function MenuCard({ menu }: { menu: Menu }) {
           >
             {added ? "✔ Ditambahkan" : "🛒 Keranjang"}
           </button>
+
         </div>
+
       </div>
+
     </div>
   );
 }

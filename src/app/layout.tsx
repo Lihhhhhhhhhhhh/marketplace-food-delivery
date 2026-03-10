@@ -13,18 +13,30 @@ export default function RootLayout({
 }) {
 
   const pathname = usePathname();
-  const isAuthPage = 
-   pathname.startsWith("/login")||
-   pathname.startsWith("/register");
+
+  const isAuthPage =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register");
+
+  const isAdminPage =
+    pathname.startsWith("/admin");
+
+  const hideLayout = isAuthPage || isAdminPage;
 
   return (
     <html lang="id">
       <body>
+
         <CartProvider>
-          {!isAuthPage && <Header />}
+
+          {!hideLayout && <Header />}
+
           {children}
-          {!isAuthPage && <Footer />}
+
+          {!hideLayout && <Footer />}
+
         </CartProvider>
+
       </body>
     </html>
   );
