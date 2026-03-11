@@ -29,7 +29,7 @@ export default function MenuPage() {
     };
 
     fetchMenus();
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

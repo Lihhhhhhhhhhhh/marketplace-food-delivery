@@ -1,30 +1,42 @@
 import midtransClient from "midtrans-client";
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
-export async function POST(req:Request){
+export async function POST(req: Request) {
 
- const body = await req.json();
+  const supabase = await createClient();
+  const body = await req.json();
 
- const snap = new midtransClient.Snap({
-  isProduction:false,
-  serverKey:process.env.MIDTRANS_SERVER_KEY
- });
+  const items = body.items;
 
- const parameter = {
-  transaction_details:{
-   order_id:"ORDER-"+Date.now(),
-   gross_amount:100000
-  },
-  customer_details:{
-   first_name:body.name,
-   phone:body.phone
+  // kurangi stok produk
+  for (const item of items) {
+    await supabase.rpc("decrease_stock", {
+      product_id: item.id,
+      qty: item.quantity
+    });
   }
- };
 
- const transaction = await snap.createTransaction(parameter);
+  const snap = new midtransClient.Snap({
+  isProduction:false,
+  serverKey:process.env.MIDTRANS_SERVER_KEY!,
+  clientKey:process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!
+});
 
- return NextResponse.json({
-  snapToken:transaction.token
- });
+  const parameter = {
+    transaction_details: {
+      order_id: "ORDER-" + Date.now(),
+      gross_amount: body.total,
+    },
+    customer_details: {
+      first_name: body.name,
+      phone: body.phone,
+    },
+  };
 
+  const transaction = await snap.createTransaction(parameter);
+
+  return NextResponse.json({
+    snapToken: transaction.token,
+  });
 }

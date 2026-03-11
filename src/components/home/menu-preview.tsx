@@ -1,12 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useCart } from "@/context/cart-context";
-import { menus } from "@/data/menu";
+import { createClient } from "@/lib/supabase/client";
 import { MenuCard } from "@/components/menu/menu-card";
+import { Product } from "@/types/product";
 
 export function MenuPreview() {
+
+  const supabase = createClient();
+
+  const [menus,setMenus] = useState<Product[]>([]);
+
+  useEffect(()=>{
+
+    const fetchMenus = async ()=>{
+
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .limit(3);
+
+      if(data){
+        setMenus(data);
+      }
+
+    };
+
+    fetchMenus();
+
+  },[supabase]);
+
   return (
+
     <section className="bg-[#e9dfd3] py-20">
 
       <div className="container mx-auto px-6">
@@ -21,9 +47,14 @@ export function MenuPreview() {
         </div>
 
         <div className="grid gap-10 md:grid-cols-3">
-          {menus.slice(0,3).map((menu) => (
-            <MenuCard key={menu.id} menu={menu} />
+
+          {menus.map((menu)=>(
+            <MenuCard
+              key={menu.id}
+              menu={menu}
+            />
           ))}
+
         </div>
 
         <div className="mt-14 text-center">
@@ -34,9 +65,9 @@ export function MenuPreview() {
             Lihat Semua Menu
           </Link>
         </div>
-        
 
       </div>
+
     </section>
   );
 }

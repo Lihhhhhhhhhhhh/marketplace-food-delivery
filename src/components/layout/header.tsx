@@ -5,11 +5,13 @@ import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/cart-context";
+import type { User } from "@supabase/supabase-js";
 
 export function Header() {
   const pathname = usePathname();
   const supabase = createClient();
-  const [user, setUser] = useState<any>(null);
+
+  const [user, setUser] = useState<User | null>(null);
 
   const { cart } = useCart();
 
@@ -19,12 +21,13 @@ export function Header() {
   );
 
   useEffect(() => {
-    const getUser = async () => {
+    async function getUser() {
       const { data } = await supabase.auth.getUser();
       setUser(data.user);
-    };
+    }
+
     getUser();
-  }, []);
+  }, [supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -65,14 +68,14 @@ export function Header() {
 
           {/* Cart */}
           <Link href="/cart" className="relative text-xl">
-          🛒
+            🛒
 
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
-              {totalItems}
-            </span>
-          )}
-        </Link>
+            {typeof window !== "undefined" && totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                {totalItems}
+              </span>
+            )}
+          </Link>
 
           {user ? (
             <button

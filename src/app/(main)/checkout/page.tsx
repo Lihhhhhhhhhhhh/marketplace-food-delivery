@@ -25,7 +25,6 @@ export default function CheckoutPage() {
     const data = await res.json();
 
     window.snap.pay(data.snapToken);
-
     
 
   };

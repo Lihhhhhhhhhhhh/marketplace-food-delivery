@@ -1,48 +1,46 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
+import { Product } from "@/types/product";
 import { createClient } from "@/lib/supabase/client";
 import { ProductForm } from "@/components/admin/product-form";
 
-type Product = {
-  id: string
-  name: string
-  description: string
-  price: number
-}
+export default function ProductsPage() {
 
-export default function ProductsPage(){
+  const supabase = createClient();
 
-  const supabase = createClient()
+  const [products,setProducts] = useState<Product[]>([]);
+  const [editing,setEditing] = useState<Product | null>(null);
 
-  const [products,setProducts] = useState<Product[]>([])
-  const [editing,setEditing] = useState<Product | null>(null)
+  useEffect(() => {
 
-  const fetchProducts = async ()=>{
+    const fetchProducts = async () => {
 
-    const {data} = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at",{ascending:false})
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at",{ascending:false});
 
-    if(data){
-      setProducts(data)
-    }
-  }
+      if(data){
+        setProducts(data);
+      }
 
-  useEffect(()=>{
-    fetchProducts()
-  },[])
+    };
+
+    fetchProducts();
+
+  }, [supabase]);
 
   const deleteProduct = async (id:string)=>{
 
     await supabase
       .from("products")
       .delete()
-      .eq("id",id)
+      .eq("id",id);
 
-    fetchProducts()
-  }
+    setProducts(prev => prev.filter(p => p.id !== id));
+
+  };
 
   return(
 
@@ -54,10 +52,7 @@ export default function ProductsPage(){
 
       <ProductForm
         product={editing || undefined}
-        onSuccess={()=>{
-          setEditing(null)
-          fetchProducts()
-        }}
+        onSuccess={()=>setEditing(null)}
       />
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
@@ -69,6 +64,7 @@ export default function ProductsPage(){
             <tr className="text-left">
               <th className="p-3">Nama</th>
               <th className="p-3">Harga</th>
+              <th className="p-3">Stok</th>
               <th className="p-3">Aksi</th>
             </tr>
 
@@ -77,6 +73,7 @@ export default function ProductsPage(){
           <tbody>
 
             {products.map((product)=>(
+
               <tr key={product.id} className="border-t">
 
                 <td className="p-3">
@@ -85,6 +82,10 @@ export default function ProductsPage(){
 
                 <td className="p-3">
                   Rp {product.price.toLocaleString("id-ID")}
+                </td>
+
+                <td className="p-3">
+                  {product.stock}
                 </td>
 
                 <td className="p-3 space-x-2">
@@ -106,6 +107,7 @@ export default function ProductsPage(){
                 </td>
 
               </tr>
+
             ))}
 
           </tbody>
